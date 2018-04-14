@@ -2,6 +2,8 @@
 
 _Transform your shapes in a sketchy, scribbly, hand-drawn-like, style._
 
+![rough mov](https://user-images.githubusercontent.com/3254314/38770598-b1090f1a-4015-11e8-9d46-a2ac15baed62.gif)
+
 ## Installation
 
 * [Download](https://github.com/mathieudutour/rough-sketch/releases/latest) the latest release of the plugin
