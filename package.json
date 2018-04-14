@@ -1,0 +1,33 @@
+{
+  "name": "rough-sketch",
+  "description": "Transform your shapes in a sketchy, scribbly, hand-drawn-like, style.",
+  "version": "0.1.0",
+  "engines": {
+    "sketch": ">=3.0"
+  },
+  "skpm": {
+    "name": "Rough",
+    "manifest": "src/manifest.json",
+    "main": "rough.sketchplugin",
+    "assets": [
+      "assets/**/*"
+    ]
+  },
+  "scripts": {
+    "build": "skpm-build",
+    "watch": "skpm-build --watch",
+    "start": "skpm-build --watch --run",
+    "postinstall": "npm run build && skpm-link"
+  },
+  "devDependencies": {
+    "@skpm/builder": "^0.5.2"
+  },
+  "author": "mathieudutour <mathieu@dutour.me>",
+  "dependencies": {
+    "roughjs": "^2.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mathieudutour/rough-sketch.git"
+  }
+}
