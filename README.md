@@ -6,6 +6,8 @@ _Transform your shapes in a sketchy, scribbly, hand-drawn-like, style._
 
 ## Installation
 
+_Requires Sketch >= 50_
+
 * [Download](https://github.com/mathieudutour/rough-sketch/releases/latest) the latest release of the plugin
 * Un-zip
 * Double-click on rough.sketchplugin
