@@ -154,6 +154,13 @@ export class RoughSketch {
           mask.sketchObject.clippingMaskMode = 0
           path.parent = group
           path.adjustToFit()
+
+          hash.frame = {
+            width: hash.frame.width,
+            height: hash.frame.height,
+            x: 0,
+            y: 0
+          }
           break;
         }
       }
