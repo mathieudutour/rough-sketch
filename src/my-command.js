@@ -63,6 +63,7 @@ export default function(context) {
     layer.hidden = true
     layer.selected = false
     // select new one
+
     newLayer.selected = true
   })
 }
