@@ -1,9 +1,11 @@
 import { RoughGenerator } from 'roughjs/src/generator' // we hook into the internals to write the wrapper ourselves
 import sketch from 'sketch'
 
+const shapeFromPath = MSShapeGroup.shapeWithBezierPath || MSShapeGroup.layerWithPath
+
 export class RoughSketch {
   constructor(layer, config) {
-    this.layer = sketch.fromNative(layer);
+    this.layer = layer;
     this._init(config);
   }
 
@@ -79,7 +81,7 @@ export class RoughSketch {
       switch (drawing.type) {
         case 'path': {
           let closed = MOPointer.alloc().init()
-          path = sketch.Shape.fromNative(MSShapeGroup.shapeWithBezierPath(
+          path = sketch.Shape.fromNative(shapeFromPath(
             MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
               this._opsToPath(drawing),
               closed
@@ -95,7 +97,7 @@ export class RoughSketch {
         }
         case 'fillPath': {
           let closed = MOPointer.alloc().init()
-          path = sketch.Shape.fromNative(MSShapeGroup.shapeWithBezierPath(
+          path = sketch.Shape.fromNative(shapeFromPath(
             MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
               this._opsToPath(drawing),
               closed
@@ -113,7 +115,7 @@ export class RoughSketch {
         }
         case 'path2Dfill': {
           let closed = MOPointer.alloc().init()
-          path = sketch.Shape.fromNative(MSShapeGroup.shapeWithBezierPath(
+          path = sketch.Shape.fromNative(shapeFromPath(
             MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
               drawing.path,
               closed
@@ -136,7 +138,7 @@ export class RoughSketch {
           })
 
           let closed = MOPointer.alloc().init()
-          const mask = sketch.Shape.fromNative(MSShapeGroup.shapeWithBezierPath(
+          const mask = sketch.Shape.fromNative(shapeFromPath(
             MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
               drawing.path,
               closed
@@ -176,7 +178,7 @@ export class RoughSketch {
       fweight = o.strokeWidth / 2;
     }
     let closed = MOPointer.alloc().init()
-    let path = sketch.Shape.fromNative(MSShapeGroup.shapeWithBezierPath(
+    let path = sketch.Shape.fromNative(shapeFromPath(
       MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
         this._opsToPath(drawing),
         closed

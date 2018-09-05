@@ -13,7 +13,7 @@ function getOptionsFromLayer(layer) {
   let options = {}
 
   const fill = (layer.style.fills || []).filter(
-    f => f.sketchObject.isEnabled() && f.fill === 'Color'
+    f => f.sketchObject.isEnabled() && f.fill === sketch.Style.FillType.Color
   )[0]
 
   if (fill) {
@@ -21,7 +21,7 @@ function getOptionsFromLayer(layer) {
   }
 
   const border = (layer.style.borders || []).filter(
-    f => f.sketchObject.isEnabled() && f.fillType === 'Color'
+    f => f.sketchObject.isEnabled() && f.fillType === sketch.Style.FillType.Color
   )[0]
 
   if (border) {
@@ -44,11 +44,15 @@ export default function(context) {
   }
 
   selection.forEach(layer => {
-    if (layer.type !== 'Shape') {
+    if (!layer.sketchObject.pathInFrameWithTransforms) {
       return
     }
 
-    const rc = new RoughSketch(layer.parent)
+    // override the wrapper to have a proper object
+    layer = sketch.Shape.fromNative(layer.sketchObject)
+
+    const rc = new RoughSketch(layer.parent.type === 'Page' ? layer : layer.parent)
+
     const newLayer = rc.path(
       getPathFromLayer(layer),
       getOptionsFromLayer(layer)
@@ -62,8 +66,8 @@ export default function(context) {
     // hide previous layer
     layer.hidden = true
     layer.selected = false
-    // select new one
 
+    // select new one
     newLayer.selected = true
   })
 }
