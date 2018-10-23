@@ -12,6 +12,11 @@ function getPathFromLayer(layer) {
 function getOptionsFromLayer(layer) {
   let options = {}
 
+  if (!layer.style) {
+    options.fill = '#000000'
+    return
+  }
+
   const fill = (layer.style.fills || []).filter(
     f => f.sketchObject.isEnabled() && f.fill === sketch.Style.FillType.Color
   )[0]
@@ -31,7 +36,50 @@ function getOptionsFromLayer(layer) {
     options.stroke = '#00000000'
   }
 
+  if (!fill) {
+    if (layer.type === 'Text') {
+      options.fill = sketch.Style.colorToString(layer.sketchObject.textColor())
+    } else if (!border) {
+      options.fill = '#000000'
+    }
+  }
+
   return options
+}
+
+function makeRough(layer) {
+  if (layer.type === 'Group') {
+    layer.layers.forEach(makeRough)
+    return
+  }
+
+  if (!layer.sketchObject.pathInFrameWithTransforms) {
+    return
+  }
+
+  // override the wrapper to have a proper object
+  if (!layer.type) {
+    layer = sketch.Shape.fromNative(layer.sketchObject)
+  }
+
+  const rc = new RoughSketch(layer.parent.type === 'Page' ? layer : layer.parent)
+
+  const newLayer = rc.path(
+    getPathFromLayer(layer),
+    getOptionsFromLayer(layer)
+  )
+
+  newLayer.name = 'Rough ' + layer.name
+
+  // add new layer to parent
+  newLayer.parent = layer.parent
+
+  // hide previous layer
+  layer.hidden = true
+  layer.selected = false
+
+  // select new one
+  newLayer.selected = true
 }
 
 export default function(context) {
@@ -43,31 +91,5 @@ export default function(context) {
     return
   }
 
-  selection.forEach(layer => {
-    if (!layer.sketchObject.pathInFrameWithTransforms) {
-      return
-    }
-
-    // override the wrapper to have a proper object
-    layer = sketch.Shape.fromNative(layer.sketchObject)
-
-    const rc = new RoughSketch(layer.parent.type === 'Page' ? layer : layer.parent)
-
-    const newLayer = rc.path(
-      getPathFromLayer(layer),
-      getOptionsFromLayer(layer)
-    )
-
-    newLayer.name = 'Rough ' + layer.name
-
-    // add new layer to parent
-    newLayer.parent = layer.parent
-
-    // hide previous layer
-    layer.hidden = true
-    layer.selected = false
-
-    // select new one
-    newLayer.selected = true
-  })
+  selection.forEach(makeRough)
 }
