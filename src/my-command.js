@@ -48,7 +48,7 @@ function getOptionsFromLayer(layer) {
 }
 
 function makeRough(layer) {
-  if (layer.type === 'Group') {
+  if (layer.type === 'Group' || layer.type === 'Artboard') {
     layer.layers.forEach(makeRough)
     return
   }
