@@ -1,7 +1,5 @@
-import { RoughGenerator } from 'roughjs/src/generator' // we hook into the internals to write the wrapper ourselves
-import sketch from 'sketch'
-
-const shapeFromPath = MSShapeGroup.shapeWithBezierPath || MSShapeGroup.layerWithPath
+import { RoughGenerator } from "roughjs/src/generator"; // we hook into the internals to write the wrapper ourselves
+import sketch from "sketch";
 
 export class RoughSketch {
   constructor(layer, config) {
@@ -74,59 +72,43 @@ export class RoughSketch {
         width: this.layer.frame.width,
         height: this.layer.frame.height
       }
-    })
+    });
 
     for (let drawing of sets) {
       let path = null;
       switch (drawing.type) {
-        case 'path': {
-          let closed = MOPointer.alloc().init()
-          path = sketch.Shape.fromNative(shapeFromPath(
-            MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
-              this._opsToPath(drawing),
-              closed
-            ))
-          ));
-          path.style.borders = [{
-            color: o.stroke,
-            thickness: o.strokeWidth
-          }];
+        case "path": {
+          path = sketch.ShapePath.fromSVGPath(this._opsToPath(drawing));
+          path.style.borders = [
+            {
+              color: o.stroke,
+              thickness: o.strokeWidth
+            }
+          ];
           path.style.fills = [];
-          path.parent = group
+          path.parent = group;
           break;
         }
-        case 'fillPath': {
-          let closed = MOPointer.alloc().init()
-          path = sketch.Shape.fromNative(shapeFromPath(
-            MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
-              this._opsToPath(drawing),
-              closed
-            ))
-          ));
+        case "fillPath": {
+          path = sketch.ShapePath.fromSVGPath(this._opsToPath(drawing));
           path.style.borders = [];
           path.style.fills = [o.fill];
-          path.parent = group
+          path.parent = group;
           break;
         }
-        case 'fillSketch': {
+        case "fillSketch": {
           path = this._fillSketch(drawing, o);
-          path.parent = group
+          path.parent = group;
           break;
         }
-        case 'path2Dfill': {
-          let closed = MOPointer.alloc().init()
-          path = sketch.Shape.fromNative(shapeFromPath(
-            MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
-              drawing.path,
-              closed
-            ))
-          ));
+        case "path2Dfill": {
+          path = sketch.ShapePath.fromSVGPath(drawing.path);
           path.style.borders = [];
           path.style.fills = [o.fill];
-          path.parent = group
+          path.parent = group;
           break;
         }
-        case 'path2Dpattern': {
+        case "path2Dpattern": {
           const size = drawing.size;
           path = new sketch.Group({
             frame: {
@@ -135,40 +117,34 @@ export class RoughSketch {
               width: this.layer.frame.width,
               height: this.layer.frame.height
             }
-          })
+          });
 
-          let closed = MOPointer.alloc().init()
-          const mask = sketch.Shape.fromNative(shapeFromPath(
-            MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
-              drawing.path,
-              closed
-            ))
-          ));
+          const mask = sketch.ShapePath.fromSVGPath(drawing.path);
           mask.style.borders = [];
           mask.style.fills = [];
 
           mask.parent = path;
 
           const hash = this._fillSketch(drawing, o);
-          hash.parent = path
+          hash.parent = path;
 
-          mask.sketchObject.hasClippingMask = true
-          mask.sketchObject.clippingMaskMode = 0
-          path.parent = group
-          path.adjustToFit()
+          mask.sketchObject.hasClippingMask = true;
+          mask.sketchObject.clippingMaskMode = 0;
+          path.parent = group;
+          path.adjustToFit();
 
           hash.frame = {
             width: hash.frame.width,
             height: hash.frame.height,
             x: 0,
             y: 0
-          }
+          };
           break;
         }
       }
     }
 
-    group.adjustToFit()
+    group.adjustToFit();
     return group;
   }
 
@@ -177,17 +153,13 @@ export class RoughSketch {
     if (fweight < 0) {
       fweight = o.strokeWidth / 2;
     }
-    let closed = MOPointer.alloc().init()
-    let path = sketch.Shape.fromNative(shapeFromPath(
-      MSPath.pathWithBezierPath(SVGPathInterpreter.bezierPathFromCommands_isPathClosed(
-        this._opsToPath(drawing),
-        closed
-      ))
-    ));
-    path.style.borders = [{
-      color: o.fill,
-      thickness: fweight
-    }];
+    let path = sketch.ShapePath.fromSVGPath(this._opsToPath(drawing));
+    path.style.borders = [
+      {
+        color: o.fill,
+        thickness: fweight
+      }
+    ];
     path.style.fills = [];
     return path;
   }
