@@ -1,7 +1,7 @@
 {
   "name": "rough-sketch",
   "description": "Transform your shapes in a sketchy, scribbly, hand-drawn-like, style.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "engines": {
     "sketch": ">=3.0"
   },
