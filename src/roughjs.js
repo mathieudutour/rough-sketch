@@ -1,6 +1,18 @@
 import { RoughGenerator } from "roughjs/src/generator"; // we hook into the internals to write the wrapper ourselves
 import sketch from "sketch";
 
+// https://github.com/sketch-hq/SketchAPI/issues/694
+sketch.ShapePath.fromSVGPath = function monkeyPathFromSVGPath(svgPath) {
+  return new sketch.ShapePath({
+    sketchObject: MSShapePathLayer.layerWithPath_integralFrame(
+      MSPath.pathWithBezierPath(
+        SVGPathInterpreter.bezierPathFromCommands(svgPath)
+      ),
+      true
+    )
+  });
+};
+
 export class RoughSketch {
   constructor(layer, config) {
     this.layer = layer;
