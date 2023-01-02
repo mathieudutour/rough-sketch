@@ -20,7 +20,7 @@
     "postinstall": "npm run build && skpm-link"
   },
   "devDependencies": {
-    "@skpm/builder": "^0.7.4"
+    "@skpm/builder": "^0.7.11"
   },
   "author": "mathieudutour <mathieu@dutour.me>",
   "dependencies": {
